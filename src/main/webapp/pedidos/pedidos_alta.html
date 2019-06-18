@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Ejercicio</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-mockjax/1.6.2/jquery.mockjax.js"></script> 
+  </head>
+  <body>
+    <script type="text/javascript">
+      $.mockjax({
+                url: "/pedidos/guardar",
+                responseText: {
+                  status: "success"
+                }
+              });
+      function guardarPedido(){
+         var nombre_param=$("#pedido_nombre").val();
+         var monto_param=$("#pedido_monto").val();
+
+         if(nombre_param != '' && monto_param!='' ){//esto se puede cambiar por un validar formulario seguramente.
+           $.ajax({
+                        data:  {
+                          nombre: nombre_param,
+                          monto: $("#pedido_monto").val(),
+                          descuento:$("#pedido_descuento").val()
+                        }, 
+                        url:   '/pedidos/guardar', 
+                        type:  'post',
+                        beforeSend: function () {
+                                $("#resultado").html("Procesando, espere por favor...");
+                        },
+                        success:  function (response) {
+                                $("#resultado").html("Se creo el pedido XXX. Nombre: "+nombre_param);
+                                $("#pedido_form").trigger("reset");
+                        },
+                        error:  function (response) {
+                                $("#resultado").html("Error, consulte con servicio tecnico.");
+                        }
+        });
+        }else{
+            $("#resultado").html("Por favor completar los campos.");
+        }
+      }
+
+
+      function isNumberKey(evt)
+      {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57))
+        return false;
+        return true;
+      }  
+      
+      
+      function isNumericKey(evt)
+      {
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode != 46 && charCode > 31 && (charCode < 48 || charCode > 57))
+        return true;
+        return false;
+      } 
+
+     
+    </script>
+  
+
+  <div class="container">
+    <h2>Nuevo Pedido</h2>
+    
+    <form action="" id="pedido_form" class="was-validated">
+        <div class="form-group">
+          <label for="pedido_nombre">Nombre:</label>
+          <input type="text" class="form-control" id="pedido_nombre" placeholder="Nombre" name="pedido_nombre" maxlength="100" onkeypress="return isNumericKey(event)" required>
+          <div class="valid-feedback">Valido.</div>
+          <div class="invalid-feedback">Completar nombre.</div>
+        </div>
+        <div class="form-group">
+          <label for="pedido_monto">Monto:</label>
+          <input type="text" class="form-control" id="pedido_monto" placeholder="Monto" name="pedido_monto" maxlength="50" onkeypress="return isNumberKey(event)" required>
+          <div class="valid-feedback">Valido.</div>
+          <div class="invalid-feedback">Completar monto.</div>
+        </div>
+        <div class="form-group">
+          <label for="pedido_descuento">Descuento:</label>
+          <input type="text" class="form-control" id="pedido_descuento" placeholder="Descuento" maxlength="50" onkeypress="return isNumberKey(event)" >
+        </div>
+        <button type="button" class="btn btn-primary" id="btn_pedido_guardar" onclick="guardarPedido()">Guardar</button>
+    </form>
+
+    <div id="mensaje_pedido">
+       <span id="resultado"></span>
+    </div>
+  </div>
+  </body>
+</html>
